@@ -74,6 +74,9 @@ class Settings(BaseSettings):
 
     # --- Behavior flags ---
     dry_run: bool = True  # when True, never actually publishes to Instagram
+    # When True, the daily run skips human approval: posts are auto-approved and
+    # published by the next /run-poller (fully hands-off scheduling).
+    auto_approve: bool = False
     imaging_force_pillow: bool = False  # tests/CI set this to skip the Chromium dependency
     formats_enabled: List[str] = Field(default_factory=lambda: ["SINGLE", "STORY"])
 

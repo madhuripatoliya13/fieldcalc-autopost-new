@@ -109,7 +109,8 @@ def _draft_from_brief(today: str, brief: dict) -> dict:
                 "_feature": feature,
                 "_angle": angle,
             },
-            status=PostStatus.PENDING_APPROVAL,
+            status=PostStatus.APPROVED if settings.auto_approve else PostStatus.PENDING_APPROVAL,
+            publish_at=_now() if settings.auto_approve else None,
         )
         s.add(post)
         s.commit()
@@ -136,11 +137,23 @@ def _draft_from_brief(today: str, brief: dict) -> dict:
         s.commit()
 
     flag = "" if report["ok"] else " ⚠️ verification flagged issues"
-    notify.send(
-        "📸 New post ready to review",
-        f"{feature['name']} · {angle['name']} · {fmt.value}{flag}\nApprove in the dashboard.",
-    )
-    return {"status": "drafted", "post_id": post_id, "format": fmt.value, "verified": report["ok"]}
+    if settings.auto_approve:
+        notify.send(
+            "📸 New post auto-approved",
+            f"{feature['name']} · {angle['name']} · {fmt.value}{flag}\nPublishing on the next poller run.",
+        )
+    else:
+        notify.send(
+            "📸 New post ready to review",
+            f"{feature['name']} · {angle['name']} · {fmt.value}{flag}\nApprove in the dashboard.",
+        )
+    return {
+        "status": "drafted",
+        "post_id": post_id,
+        "format": fmt.value,
+        "verified": report["ok"],
+        "auto_approved": settings.auto_approve,
+    }
 
 
 def generate_daily() -> dict:
