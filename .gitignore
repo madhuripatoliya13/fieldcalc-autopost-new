@@ -24,3 +24,4 @@ assets_out/
 # Backups
 backups/
 .github/
+CREDENTIALS.md

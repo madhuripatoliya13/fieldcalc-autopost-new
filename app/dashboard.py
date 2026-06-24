@@ -190,13 +190,19 @@ def ui_reset_generation():
 
 @router.post("/ui/approve/{post_id}", dependencies=[Depends(require_dashboard)])
 def ui_approve(post_id: int):
+    """Approve and publish immediately: clicking Approve posts to Instagram right
+    away (review-then-post), instead of waiting for the background poller."""
     result = pipeline.approve(post_id)
-    if result.get("status") == "approved":
-        return RedirectResponse(
-            _notice_url(f"Post #{post_id} approved and scheduled. It moved to Recent activity.", "success"),
-            status_code=303,
-        )
-    return RedirectResponse(_notice_url(f"Post #{post_id} was not approved: {result.get('reason', 'unknown')}", "error"), status_code=303)
+    if result.get("status") != "approved":
+        return RedirectResponse(_notice_url(f"Post #{post_id} was not approved: {result.get('reason', 'unknown')}", "error"), status_code=303)
+
+    # Publish now so the human sees it go live the moment they approve.
+    pub = pipeline.publish_due()
+    if post_id in (pub.get("published") or []):
+        return RedirectResponse(_notice_url(f"Post #{post_id} approved and PUBLISHED to Instagram ✅", "success"), status_code=303)
+    if post_id in (pub.get("failed") or []):
+        return RedirectResponse(_notice_url(f"Post #{post_id} approved but publishing failed — check logs, then use Recent activity to retry.", "error"), status_code=303)
+    return RedirectResponse(_notice_url(f"Post #{post_id} approved. Publishing shortly.", "success"), status_code=303)
 
 
 @router.post("/ui/reject/{post_id}", dependencies=[Depends(require_dashboard)])
