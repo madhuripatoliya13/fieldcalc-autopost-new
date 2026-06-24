@@ -298,120 +298,166 @@ def _draw_phone_mockup(screenshot_path: str, accent: tuple[int, int, int],
     return canvas
 
 
+
+
+def _draw_neon_glow(img: Image.Image, cx: int, cy: int, radius: int, color: tuple[int, int, int, int]):
+    """Draws a soft neon radial glow behind elements for a tech aesthetic."""
+    glow = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    # Draw concentric circles with decreasing opacity
+    for r in range(radius, 0, -8):
+        alpha = int((1 - (r / radius)) * color[3])
+        gd.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(color[0], color[1], color[2], alpha))
+    img.alpha_composite(glow)
+
+def _draw_badge_icon(bd: ImageDraw.ImageDraw, cx: int, cy: int, r: int, accent: tuple[int, int, int]) -> None:
+    """Draw a crisp vector check-mark inside an accent ring (emoji don't render
+    in Pillow's bundled fonts, so we draw the glyph ourselves)."""
+    bd.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(*accent, 45), outline=(*accent, 255), width=2)
+    # check mark
+    s = r * 0.55
+    bd.line(
+        [(cx - s * 0.55, cy + s * 0.05), (cx - s * 0.1, cy + s * 0.5), (cx + s * 0.65, cy - s * 0.5)],
+        fill=(255, 255, 255), width=max(3, int(r * 0.18)), joint="curve",
+    )
+
+
+def _draw_floating_badge(img: Image.Image, x: int, y: int, w: int, h: int, title: str, subtitle: str, accent: tuple[int, int, int]):
+    """Draws a semi-transparent glassmorphic floating badge with clean borders."""
+    badge = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    bd = ImageDraw.Draw(badge)
+
+    # Rounded glass background + glowing border
+    bd.rounded_rectangle([0, 0, w - 4, h - 4], radius=20, fill=(12, 18, 28, 225))
+    bd.rounded_rectangle([0, 0, w - 4, h - 4], radius=20, outline=(*accent, 190), width=2)
+
+    # Vector icon (drawn, not emoji)
+    _draw_badge_icon(bd, cx=42, cy=h // 2, r=24, accent=accent)
+
+    # Title & subtitle — truncate on word boundary with an ellipsis (no mid-word cuts)
+    tfont, sfont = _font(20, bold=True), _font(15)
+
+    def _fit(text: str, font, max_w: int) -> str:
+        text = (text or "").strip()
+        if not text or bd.textlength(text, font=font) <= max_w:
+            return text
+        words = text.split()
+        out = ""
+        for word in words:
+            cand = (out + " " + word).strip()
+            if bd.textlength(cand + "…", font=font) > max_w:
+                break
+            out = cand
+        return (out + "…") if out else text
+
+    title = _fit((title or "").upper(), tfont, w - 96)
+    subtitle = _fit(subtitle, sfont, w - 96)
+    bd.text((80, h // 2 - 22), title, font=tfont, fill=(255, 255, 255))
+    bd.text((80, h // 2 + 4), subtitle, font=sfont, fill=(170, 188, 208))
+
+    # Drop shadow
+    shadow = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    sd = ImageDraw.Draw(shadow)
+    sd.rounded_rectangle([x + 6, y + 8, x + w + 2, y + h + 2], radius=20, fill=(0, 0, 0, 100))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(10))
+
+    img.alpha_composite(shadow)
+    img.alpha_composite(badge, (x, y))
+
+
+def _feature_badges(feature: dict, content: dict) -> list[tuple[str, str]]:
+    """Build up to 4 (title, subtitle) badges from the feature's own data, so each
+    feature shows its own value props — not hardcoded voice-navigation text."""
+    feat = feature or {}
+    keywords = [k for k in (content or {}).get("keywords", []) or feat.get("keywords", []) if k]
+    uses = [u for u in feat.get("use_cases", []) if u]
+    badges: list[tuple[str, str]] = []
+    for i in range(4):
+        title = ""
+        if i < len(keywords):
+            title = keywords[i]
+        elif i < len(uses):
+            title = " ".join(uses[i].split()[:2])
+        sub = ""
+        if i < len(uses):
+            sub = uses[i]
+        badges.append((title[:16] if title else "", sub[:26] if sub else ""))
+    # Drop empty badges; guarantee at least the benefit as one badge.
+    badges = [(t, s) for (t, s) in badges if t or s]
+    if not badges:
+        benefit = feat.get("primary_benefit") or feat.get("short") or "Trusted by 10M+ users"
+        badges = [(feat.get("name", "FieldCalc")[:16], benefit[:26])]
+    return badges[:4]
+
 # ---------------------------------------------------------------------------
 # Main composite builder
 # ---------------------------------------------------------------------------
-def create_marketing_composite(img_bytes: bytes, slide: dict) -> Image.Image:
-    """
-    Professional app marketing composite layout:
-
-    ┌─────────────────────────────────┐
-    │  AI background photo (full bleed│  ← person in scenario, no phone
-    │                    ┌──────────┐ │
-    │                    │  PHONE   │ │  ← real app screenshot in mockup
-    │                    │ MOCKUP   │ │
-    │                    └──────────┘ │
-    ├─────────────────────────────────┤
-    │ [icon] App Name                 │  ← dark panel
-    │ Feature Title (large)           │
-    │ Subtitle / benefit              │
-    │ 10M+ users                      │
-    │ [  Install Free  →  ]           │
-    └─────────────────────────────────┘
-    """
+def create_marketing_composite(img_bytes: bytes, slide: dict, feature: dict | None = None, content: dict | None = None) -> Image.Image:
     W, H = 1080, 1080
-    PANEL_H = 280       # bottom dark panel height
-    PHOTO_H = H - PANEL_H
-
     accent = _rgb(slide.get("accent", "#0aa77f"))
+    feature = feature or {}
 
-    # --- Background photo ---
-    bg = Image.open(io.BytesIO(img_bytes)).convert("RGBA")
-    # Crop to photo area only (top portion), then resize to full width
-    bg = bg.resize((W, H), Image.LANCZOS)
-    # Crop photo section taller so the person isn't cut
-    photo_section = bg.crop((0, 0, W, PHOTO_H + 60)).resize((W, PHOTO_H + 60), Image.LANCZOS)
-    photo_section = photo_section.crop((0, 0, W, PHOTO_H))
+    # Load and scale full-bleed AI background
+    bg = Image.open(io.BytesIO(img_bytes)).convert("RGBA").resize((W, H), Image.LANCZOS)
+    canvas = Image.new("RGBA", (W, H))
+    canvas.paste(bg, (0, 0))
 
-    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 255))
-    canvas.paste(photo_section.convert("RGBA"), (0, 0))
+    # 1. Ambient lighting (neon glow behind phone and header)
+    _draw_neon_glow(canvas, W // 2, H // 2, 350, (*accent, 60))
+    _draw_neon_glow(canvas, W // 2, 120, 200, (*accent, 40))
 
-    # Subtle gradient at photo bottom to blend into dark panel
-    grad_h = 120
-    grad = Image.new("RGBA", (W, grad_h), (0, 0, 0, 0))
-    for y in range(grad_h):
-        alpha = int((y / grad_h) ** 1.5 * 200)
-        ImageDraw.Draw(grad).line([(0, y), (W - 1, y)], fill=(10, 12, 18, alpha))
-    canvas.alpha_composite(grad, (0, PHOTO_H - grad_h))
+    # Dark translucent overlay at top for high-contrast header text readability
+    scrim = Image.new("RGBA", (W, 270), (10, 12, 20, 175))
+    canvas.alpha_composite(scrim, (0, 0))
 
-    # --- Dark bottom panel ---
-    panel = Image.new("RGBA", (W, PANEL_H), (10, 12, 20, 250))
-    canvas.alpha_composite(panel, (0, PHOTO_H))
-
-    # Accent top border line on panel
-    border = Image.new("RGBA", (W, 4), (*accent, 255))
-    canvas.alpha_composite(border, (0, PHOTO_H))
-
-    # --- Phone mockup ---
-    phone_w, phone_h = 300, 600
-    phone = _draw_phone_mockup(
-        slide.get("screenshot_path", ""),
-        accent, phone_w, phone_h
-    )
-    # Position: right side, spanning photo/panel boundary — guarantee bottom stays in canvas
-    phone_x = W - phone_w - 44
-    phone_y = PHOTO_H - int(phone_h * 0.72)   # 72% in photo, 28% in panel
-    phone_y = max(20, min(phone_y, H - phone_h - 10))   # clamp to canvas bounds
+    # 2. Centered Phone Mockup
+    phone_w, phone_h = 360, 700
+    phone = _draw_phone_mockup(slide.get("screenshot_path", ""), accent, phone_w, phone_h)
+    phone_x = (W - phone_w) // 2
+    phone_y = 250
     canvas.alpha_composite(phone, (phone_x, phone_y))
 
-    # --- Text in bottom panel ---
+    # 3. Feature-driven floating badges (left & right)
+    badges = _feature_badges(feature, content or {})
+    positions = [(30, 360), (30, 540), (750, 360), (750, 540)]
+    for (title, subtitle), (bx, by) in zip(badges, positions):
+        _draw_floating_badge(canvas, x=bx, y=by, w=300, h=84, title=title, subtitle=subtitle, accent=accent)
+
+    # 4. Header — feature name as headline (wrapped), app name eyebrow
     draw = ImageDraw.Draw(canvas)
-    pad = 52
-    text_right_limit = phone_x - 28   # don't let text overlap phone
+    app_name = (slide.get("app_name") or "FieldCalc").upper()
+    draw.text((W // 2, 48), app_name, font=_font(24, bold=True), fill=(170, 188, 208), anchor="mm")
 
-    y = PHOTO_H + 22
+    headline = (feature.get("name") or slide.get("title") or "").upper()
+    hfont = _font(54, bold=True)
+    lines = _wrap(draw, headline, hfont, W - 120)[:2]
+    ty = 110 if len(lines) > 1 else 130
+    for line in lines:
+        draw.text((W // 2 + 3, ty + 3), line, font=hfont, fill=(8, 10, 16), anchor="mm")  # shadow
+        draw.text((W // 2, ty), line, font=hfont, fill=(255, 255, 255), anchor="mm")
+        ty += 60
 
-    # Row 1: app icon + app name
-    icon_size = 62
-    icon_path = slide.get("app_icon_path", "")
-    if icon_path and Path(str(icon_path)).exists():
-        try:
-            icon = Image.open(str(icon_path)).convert("RGBA").resize((icon_size, icon_size), Image.LANCZOS)
-            mask = Image.new("L", (icon_size, icon_size), 0)
-            ImageDraw.Draw(mask).rounded_rectangle([0, 0, icon_size, icon_size], radius=14, fill=255)
-            canvas.paste(icon, (pad, y), mask)
-        except Exception as e:  # noqa: BLE001
-            log.warning("icon paste failed: %s", e)
+    # Benefit sub-line under the headline
+    benefit = (feature.get("primary_benefit") or feature.get("short") or "").strip()
+    if benefit:
+        sfont = _font(22, bold=True)
+        sline = _wrap(draw, benefit, sfont, W - 240)[:1]
+        if sline:
+            draw.text((W // 2, ty + 4), sline[0], font=sfont, fill=accent, anchor="mm")
 
-    app_name = (slide.get("app_name") or "").strip()
-    if app_name:
-        draw.text((pad + icon_size + 14, y + 14), app_name,
-                  font=_font(28, bold=True), fill=(180, 195, 215))
+    # 5. Bottom panel + Google Play CTA
+    panel_y = H - 160
+    canvas.alpha_composite(Image.new("RGBA", (W, 160), (10, 12, 20, 245)), (0, panel_y))
+    canvas.alpha_composite(Image.new("RGBA", (W, 4), (*accent, 255)), (0, panel_y))
 
-    y += icon_size + 10
-
-    # Row 2: Feature title (large)
-    title = (slide.get("title") or "").strip()
-    title_font = _font(54, bold=True)
-    max_w = text_right_limit - pad
-    for line in _wrap(draw, title, title_font, max_w)[:2]:
-        draw.text((pad, y), line, font=title_font, fill=(255, 255, 255))
-        y += 62
-
-    # Row 3: subtitle (1 line)
-    subtitle = (slide.get("subtitle") or "").strip()
-    if subtitle:
-        sub_font = _font(28, bold=False)
-        sub_lines = _wrap(draw, subtitle, sub_font, max_w)[:1]
-        for line in sub_lines:
-            draw.text((pad, y), line, font=sub_font, fill=(160, 178, 198))
-            y += 36
-        y += 4
-
-    # No stats badge, no CTA button — clean minimal panel.
+    btn_w, btn_h = 600, 84
+    btn_x = (W - btn_w) // 2
+    btn_y = panel_y + 38
+    draw.rounded_rectangle([btn_x, btn_y, btn_x + btn_w, btn_y + btn_h], radius=24, fill=(198, 230, 43, 255))
+    draw.text((btn_x + btn_w // 2, btn_y + btn_h // 2 - 2), "DOWNLOAD FREE ON GOOGLE PLAY",
+              font=_font(26, bold=True), fill=(12, 18, 28), anchor="mm")
 
     return canvas.convert("RGB")
-
 
 # ---------------------------------------------------------------------------
 # Full pipeline
@@ -426,7 +472,7 @@ def generate_realistic_post(
         img_bytes = generate_ai_image(prompt, seed)
         if not img_bytes:
             return None
-        final = create_marketing_composite(img_bytes, slide)
+        final = create_marketing_composite(img_bytes, slide, feature=feature, content=content or {})
         out_path = OUT_DIR / f"{post_key}_ai.png"
         final.save(out_path)
         log.info("marketing composite saved: %s", out_path)
