@@ -141,11 +141,29 @@ def create_container(image_urls: list[str], caption: str, post_format: PostForma
     return res["id"]
 
 
+def _wait_until_ready(creation_id: str, timeout: int = 60, interval: int = 4) -> None:
+    """Instagram processes a freshly-created container asynchronously. Publishing
+    before it's FINISHED returns code 9007 ('media not ready'). Poll status_code
+    until FINISHED, raising on ERROR/EXPIRED or timeout."""
+    waited = 0
+    while waited < timeout:
+        status = _get(creation_id, {"fields": "status_code"}).get("status_code", "")
+        if status == "FINISHED":
+            return
+        if status in {"ERROR", "EXPIRED"}:
+            raise PermanentError(f"container {creation_id} status={status}")
+        time.sleep(interval)
+        waited += interval
+    # Still not ready — transient so the poller retries (container persisted).
+    raise TransientError(f"container {creation_id} not ready after {timeout}s")
+
+
 def publish(creation_id: str) -> str:
     """Publish a previously created container; returns the final media id."""
     if settings.dry_run:
         log.info("[DRY_RUN] publish container=%s", creation_id)
         return f"dryrun-media-{creation_id.split('-')[-1]}"
+    _wait_until_ready(creation_id)
     res = _post(f"{settings.ig_user_id}/media_publish", {"creation_id": creation_id})
     return res["id"]
 

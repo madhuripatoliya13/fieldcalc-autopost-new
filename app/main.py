@@ -95,6 +95,25 @@ def reject(post_id: int, reason: str = "") -> dict:
     return pipeline.reject(post_id, reason)
 
 
+@app.post("/requeue/{post_id}", dependencies=[Depends(require_run_token)])
+def requeue(post_id: int) -> dict:
+    """Reset a FAILED post back to APPROVED so the poller retries it with a fresh
+    container (clears the stale creation_id from the failed attempt)."""
+    from datetime import datetime, timezone
+
+    from app.database import Post, PostStatus, SessionLocal
+    with SessionLocal() as s:
+        post = s.get(Post, post_id)
+        if not post:
+            return {"status": "error", "reason": "not found"}
+        post.status = PostStatus.APPROVED
+        post.creation_id = None
+        post.reject_reason = None
+        post.publish_at = datetime.now(timezone.utc)
+        s.commit()
+    return {"status": "requeued", "post_id": post_id}
+
+
 @app.post("/ingest/installs", dependencies=[Depends(require_run_token)])
 def ingest_install(utm_content: str, source: str = "revenuecat", count: int = 1) -> dict:
     """Called by a RevenueCat webhook or a manual/Play import to record an install
