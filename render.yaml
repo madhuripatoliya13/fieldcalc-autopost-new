@@ -5,7 +5,6 @@ services:
     name: fieldcalc-ig-autopost
     runtime: python
     plan: free
-    rootDir: instagram-autopost
     # Chromium is the primary image engine; if its system libs are missing on the
     # free tier the app falls back to Pillow automatically, so the build still works.
     buildCommand: "pip install -r requirements.txt && python -m playwright install chromium"
