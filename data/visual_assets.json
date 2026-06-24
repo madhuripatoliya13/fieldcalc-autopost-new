@@ -1,0 +1,129 @@
+{
+  "_comment": "Visual source mapping for Instagram image generation. Paths are relative to the repository root so screenshots/icons can be swapped without code edits.",
+  "defaults": {
+    "app_icon": "app/App Data/Voice GPS Navigation/appicon.jpg",
+    "brand": {
+      "app_name": "FieldCalc",
+      "publisher": "Vasundhara Infotech LLP",
+      "rating": "4.1",
+      "downloads": "10M+",
+      "cta": "Install Free"
+    },
+    "screenshots": [
+      "app/App Data/Voice GPS Navigation/Screen Shots/Regular/1.jpg",
+      "app/App Data/Voice GPS Navigation/Screen Shots/Regular/2.jpg",
+      "app/App Data/Voice GPS Navigation/Screen Shots/Regular/3.jpg",
+      "app/App Data/Voice GPS Navigation/Screen Shots/Regular/4.jpg",
+      "app/App Data/Voice GPS Navigation/Screen Shots/Regular/5.jpg"
+    ]
+  },
+  "features": {
+    "area-measurement": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_120832.png",
+      "realistic_asset": "instagram-autopost/assets/generated_scenarios/fieldcalc_area_measurement_realistic_v1_iconfixed.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/13.jpg",
+      "feature_icon": "app/src/main/res/drawable/sub_measure.png",
+      "accent": "#0aa77f",
+      "scenario": "field_measurement",
+      "show_satellite": true
+    },
+    "distance-tracking": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121205.png",
+      "realistic_asset": "instagram-autopost/assets/generated_scenarios/fieldcalc_distance_measurement_realistic_v2_iconfixed.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/15.jpg",
+      "feature_icon": "app/src/main/res/drawable/sub_measure.png",
+      "accent": "#2f80ed",
+      "scenario": "distance_path",
+      "show_satellite": false
+    },
+    "poi-markers": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121321.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121321.png",
+      "feature_icon": "app/src/main/res/drawable/ic_location_error_icon.png",
+      "accent": "#ff8a3d",
+      "scenario": "poi_marker"
+    },
+    "route-planner": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121833.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121833.png",
+      "feature_icon": "app/src/main/res/drawable/sub_route.png",
+      "accent": "#2f80ed",
+      "scenario": "route_planner"
+    },
+    "voice-navigation": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121517.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/app user visible screenshots/onboarding3.png",
+      "accent": "#29b6f6",
+      "scenario": "voice_driver"
+    },
+    "find-routes": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121924.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121924.png",
+      "feature_icon": "app/src/main/res/drawable/sub_route.png",
+      "accent": "#2f80ed",
+      "scenario": "find_routes"
+    },
+    "speedometer": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121633.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/27.jpg",
+      "feature_icon": "app/src/main/res/drawable/ic_new_speedo_meter1.png",
+      "accent": "#ff5252",
+      "scenario": "speedometer_drive"
+    },
+    "compass": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121534.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/21.jpg",
+      "feature_icon": "app/src/main/res/drawable-xhdpi/compass_icon.png",
+      "accent": "#7c6cff",
+      "scenario": "outdoor_compass",
+      "show_satellite": true
+    },
+    "gps-camera": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_122008.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/25.jpg",
+      "feature_icon": "app/src/main/res/drawable/sub_camera.png",
+      "accent": "#00b894",
+      "scenario": "gps_camera_field"
+    },
+    "gps-gallery": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_122019.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/17.jpg",
+      "feature_icon": "app/src/main/res/drawable/ic_gallery.xml",
+      "accent": "#8e5cf7",
+      "scenario": "photo_gallery"
+    },
+    "wonder-places": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121734.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/app user visible screenshots/onboarding1.png",
+      "accent": "#f4a62a",
+      "scenario": "travel_places"
+    },
+    "street-view": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/onboarding2.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/app user visible screenshots/onboarding2.png",
+      "accent": "#00a3ff",
+      "scenario": "street_view"
+    },
+    "groups": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121344.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/17.jpg",
+      "feature_icon": "app/src/main/res/drawable/ic_group_measure.xml",
+      "accent": "#6c8cff",
+      "scenario": "field_groups"
+    },
+    "saved-measurements": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121140.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/17.jpg",
+      "feature_icon": "app/src/main/res/drawable/ic_save.png",
+      "accent": "#21b7a8",
+      "scenario": "saved_records"
+    },
+    "nearby-location": {
+      "screenshot": "app/App Data/Voice GPS Navigation/app user visible screenshots/Screenshot_20260622_121425.png",
+      "scene_asset": "app/App Data/Voice GPS Navigation/enhanched app screen shots/29.jpg",
+      "feature_icon": "app/src/main/res/drawable/ic_location_pin.png",
+      "accent": "#ff7043",
+      "scenario": "nearby_places"
+    }
+  }
+}

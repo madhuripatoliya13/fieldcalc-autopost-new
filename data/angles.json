@@ -1,0 +1,68 @@
+{
+  "_comment": "The 7 content angles. feature x angle = the unique-post matrix. prompt_guidance is injected into the caption LLM prompt. best_formats steers the format picker (we build CAROUSEL, STORY, SINGLE — Reels deferred).",
+  "angles": [
+    {
+      "id": "tutorial",
+      "name": "Tutorial / How-To",
+      "description": "Step-by-step walkthrough of using the feature.",
+      "prompt_guidance": "Teach the reader how to use the feature in clear numbered steps. Hook with the outcome they get ('Measure your field in 60 seconds — here's how'). Be concrete and practical.",
+      "hook_style": "outcome-promise",
+      "cta_style": "Try it yourself — link in bio",
+      "best_formats": ["CAROUSEL"]
+    },
+    {
+      "id": "highlight",
+      "name": "Feature Highlight",
+      "description": "Showcase what the feature does and the wow factor.",
+      "prompt_guidance": "Lead with the single most impressive thing this feature does. Keep it punchy and benefit-first. Make the reader think 'I didn't know an app could do that.'",
+      "hook_style": "surprise-wow",
+      "cta_style": "Download and see for yourself",
+      "best_formats": ["SINGLE", "STORY"]
+    },
+    {
+      "id": "use-case",
+      "name": "Real-World Use Case",
+      "description": "A relatable story of someone using the feature to solve a real problem.",
+      "prompt_guidance": "Open with a relatable situation for the target audience ('Buying a plot and not sure of its real size?'). Show how the feature solves it. Be human and specific.",
+      "hook_style": "relatable-problem",
+      "cta_style": "Solve yours too — get the app",
+      "best_formats": ["CAROUSEL", "SINGLE"]
+    },
+    {
+      "id": "tip-trick",
+      "name": "Tip / Hidden Trick",
+      "description": "A lesser-known tip or power-user trick for the feature.",
+      "prompt_guidance": "Share a 'most people don't know this' tip about the feature. Make it feel like insider knowledge worth saving.",
+      "hook_style": "insider-secret",
+      "cta_style": "Save this for later",
+      "best_formats": ["SINGLE", "STORY"]
+    },
+    {
+      "id": "comparison",
+      "name": "Comparison / Before-After",
+      "description": "Contrast the old/hard way with the app's way.",
+      "prompt_guidance": "Contrast the painful manual way (hiring a surveyor, measuring tape, guessing) against doing it in the app. Make the app's advantage obvious without bashing competitors by name.",
+      "hook_style": "contrast",
+      "cta_style": "Skip the hard way — download free",
+      "best_formats": ["CAROUSEL"]
+    },
+    {
+      "id": "faq",
+      "name": "FAQ / Common Question",
+      "description": "Answer a question the audience actually asks.",
+      "prompt_guidance": "Answer one common question about the feature directly ('Can I measure area without internet?'). Be honest and only claim what the feature actually does.",
+      "hook_style": "question",
+      "cta_style": "More answers in the app",
+      "best_formats": ["CAROUSEL", "SINGLE"]
+    },
+    {
+      "id": "bts",
+      "name": "Behind the Scenes / How It Works",
+      "description": "Explain how the feature works under the hood, simply.",
+      "prompt_guidance": "Explain in plain language how the feature works (GPS points, polygon math, etc.) so the reader trusts its accuracy. Educational, builds credibility.",
+      "hook_style": "curiosity",
+      "cta_style": "Experience the accuracy yourself",
+      "best_formats": ["SINGLE", "CAROUSEL"]
+    }
+  ]
+}

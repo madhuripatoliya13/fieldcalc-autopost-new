@@ -1,0 +1,201 @@
+{
+  "_comment": "Rules for choosing the visual direction of each generated post. The dashboard shows these choices so a human can review the marketing strategy, not just the caption.",
+  "country_audiences": [
+    {
+      "id": "india",
+      "name": "India",
+      "priority": 1,
+      "share_hint": "largest current audience",
+      "visual_direction": "India-first, globally usable: Indian farmers, land owners, drivers, field workers, and practical everyday scenes."
+    },
+    {
+      "id": "indonesia",
+      "name": "Indonesia",
+      "priority": 2,
+      "share_hint": "second largest current audience",
+      "visual_direction": "Southeast Asian land, travel, driver, and field-work scenes."
+    },
+    {
+      "id": "thailand",
+      "name": "Thailand",
+      "priority": 3,
+      "share_hint": "strong Southeast Asia audience",
+      "visual_direction": "Southeast Asian travel, local route, delivery, and outdoor scenes."
+    },
+    {
+      "id": "brazil",
+      "name": "Brazil",
+      "priority": 4,
+      "share_hint": "Latin America growth audience",
+      "visual_direction": "Brazilian farms, property, road-trip, route, and outdoor scenes."
+    },
+    {
+      "id": "global",
+      "name": "Global",
+      "priority": 5,
+      "share_hint": "neutral global creative",
+      "visual_direction": "Region-neutral, inclusive people and places for broad Instagram/Facebook use."
+    }
+  ],
+  "image_types": [
+    {
+      "id": "realistic_scenario",
+      "label": "Realistic Scenario",
+      "description": "Real person, real-world use case, feature visuals, no app screenshot required.",
+      "uses_app_mockup": false,
+      "logo_rule": "small_or_none",
+      "trust_rule": "major_posts_only"
+    },
+    {
+      "id": "realistic_scenario_with_android_mockup",
+      "label": "Realistic Scenario + Android Mockup",
+      "description": "Real-world scene with Android phone mockup using matching app UI/reference screens.",
+      "uses_app_mockup": true,
+      "logo_rule": "small",
+      "trust_rule": "major_posts_only"
+    },
+    {
+      "id": "clean_feature_explainer",
+      "label": "Clean Feature Explainer",
+      "description": "Title, short benefit, and clean vector/3D feature graphics.",
+      "uses_app_mockup": false,
+      "logo_rule": "optional",
+      "trust_rule": "hide"
+    },
+    {
+      "id": "trust_growth_post",
+      "label": "Trust / Growth Post",
+      "description": "10M+ family, rating/download trust, growth target, brand credibility.",
+      "uses_app_mockup": false,
+      "logo_rule": "prominent",
+      "trust_rule": "show"
+    },
+    {
+      "id": "problem_solution",
+      "label": "Problem / Solution",
+      "description": "Shows user pain first, then FieldCalc as the practical solution.",
+      "uses_app_mockup": false,
+      "logo_rule": "small_or_none",
+      "trust_rule": "hide"
+    },
+    {
+      "id": "tutorial_step",
+      "label": "Tutorial Step",
+      "description": "Simple how-to visual with 2-3 steps and a practical scenario.",
+      "uses_app_mockup": true,
+      "logo_rule": "small",
+      "trust_rule": "hide"
+    },
+    {
+      "id": "minimal_brand_post",
+      "label": "Minimal Brand Post",
+      "description": "Premium visual-first post with little text and small/no logo.",
+      "uses_app_mockup": false,
+      "logo_rule": "small_or_none",
+      "trust_rule": "hide"
+    },
+    {
+      "id": "app_ui_showcase",
+      "label": "App UI Showcase",
+      "description": "Android mockup focused on a real feature screen. Use only with matching screenshots.",
+      "uses_app_mockup": true,
+      "logo_rule": "small",
+      "trust_rule": "major_posts_only"
+    }
+  ],
+  "angle_image_type": {
+    "tutorial": "tutorial_step",
+    "highlight": "realistic_scenario",
+    "use-case": "realistic_scenario",
+    "tip-trick": "minimal_brand_post",
+    "comparison": "problem_solution",
+    "faq": "clean_feature_explainer",
+    "bts": "clean_feature_explainer"
+  },
+  "feature_overrides": {
+    "area-measurement": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "indonesia", "brazil", "global"],
+      "preferred_image_types": ["realistic_scenario", "realistic_scenario_with_android_mockup", "tutorial_step"]
+    },
+    "distance-tracking": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "global", "brazil"],
+      "preferred_image_types": ["realistic_scenario", "problem_solution", "tutorial_step"]
+    },
+    "poi-markers": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "global", "brazil"],
+      "preferred_image_types": ["realistic_scenario", "app_ui_showcase", "tutorial_step"]
+    },
+    "route-planner": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "indonesia", "thailand", "global"],
+      "preferred_image_types": ["realistic_scenario_with_android_mockup", "problem_solution", "app_ui_showcase"]
+    },
+    "voice-navigation": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "indonesia", "thailand", "global"],
+      "preferred_image_types": ["realistic_scenario", "realistic_scenario_with_android_mockup"]
+    },
+    "find-routes": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "thailand", "united-states", "global"],
+      "preferred_image_types": ["realistic_scenario_with_android_mockup", "problem_solution"]
+    },
+    "speedometer": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "indonesia", "brazil", "global"],
+      "preferred_image_types": ["realistic_scenario", "clean_feature_explainer"]
+    },
+    "compass": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "global", "indonesia"],
+      "preferred_image_types": ["realistic_scenario", "app_ui_showcase", "clean_feature_explainer"]
+    },
+    "gps-camera": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "global", "brazil"],
+      "preferred_image_types": ["realistic_scenario", "app_ui_showcase"]
+    },
+    "gps-gallery": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "global", "brazil"],
+      "preferred_image_types": ["app_ui_showcase", "clean_feature_explainer"]
+    },
+    "wonder-places": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "indonesia", "thailand", "global"],
+      "preferred_image_types": ["realistic_scenario", "app_ui_showcase"]
+    },
+    "street-view": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "indonesia", "thailand", "global"],
+      "preferred_image_types": ["realistic_scenario", "app_ui_showcase"]
+    },
+    "groups": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "global", "brazil"],
+      "preferred_image_types": ["app_ui_showcase", "clean_feature_explainer", "tutorial_step"]
+    },
+    "saved-measurements": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "global", "brazil"],
+      "preferred_image_types": ["app_ui_showcase", "clean_feature_explainer", "tutorial_step"]
+    },
+    "nearby-location": {
+      "matching_screenshot_ready": true,
+      "audience_sequence": ["india", "indonesia", "thailand", "global"],
+      "preferred_image_types": ["realistic_scenario", "problem_solution"]
+    }
+  },
+  "default_rules": {
+    "audience_sequence": ["india", "indonesia", "thailand", "brazil", "global"],
+    "logo_rule": "small_or_none",
+    "trust_rule": "major_posts_only",
+    "language": "English",
+    "mockup_device": "Android only",
+    "mockup_policy": "Use real matching app UI screenshots when available. Do not use random UI. If a matching screenshot is missing, use a generic feature visual instead of a fake UI.",
+    "trust_usage": "Use 10M+ only on trust/growth posts, major feature posts, and strong download CTA posts."
+  }
+}

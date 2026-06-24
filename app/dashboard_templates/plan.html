@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Plan — {{ app_name }} IG{% endblock %}
+{% block body %}
+<div class="page-head">
+  <div>
+    <h1>Feature post plan</h1>
+    <p class="subhead">{{ realistic_count }} of {{ total_features }} features have curated realistic image assets.</p>
+    {% if reset_after_post_id %}
+      <p class="subhead">Current plan reset starts after post #{{ reset_after_post_id }}{% if reset_at %} · {{ reset_at }}{% endif %}</p>
+    {% endif %}
+  </div>
+  <form method="post" action="/ui/reset-generation">
+    <button class="reject" type="submit" data-loading-text="Resetting plan...">Reset plan</button>
+  </form>
+</div>
+
+{% if notice %}
+  <div class="notice notice-{{ notice_type }}">{{ notice }}</div>
+{% endif %}
+
+<div class="notice notice-info">
+  Green means the feature has a live-ready realistic asset. Yellow means screenshots exist and the app will build an enhanced poster from them. Red means image source is missing. A used angle includes approved, pending, and rejected posts so the next create moves forward.
+</div>
+
+<div class="plan-wrap">
+  <table class="plan-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Image source</th>
+        {% for angle in angles %}
+          <th>{{ angle.name }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+        <tr>
+          <td>
+            <b>{{ row.feature.name }}</b>
+            <span>{{ row.feature.id }}</span>
+          </td>
+          <td>
+            {% if row.has_realistic %}
+              <span class="source-pill source-ready">Realistic ready</span>
+              <small>Fresh branded variant per post.</small>
+            {% elif row.has_screenshot %}
+              <span class="source-pill source-partial">Enhanced poster</span>
+              <small>Uses real app screenshots plus scenario visuals.</small>
+            {% else %}
+              <span class="source-pill source-missing">Missing</span>
+              <small>Add asset before live posting.</small>
+            {% endif %}
+          </td>
+          {% for cell in row.angle_cells %}
+            <td>
+              {% if cell.latest %}
+                <span class="matrix-used">#{{ cell.latest.id }}</span>
+                <small>{{ cell.latest.status.value }}</small>
+              {% else %}
+                <span class="matrix-empty">Not used</span>
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

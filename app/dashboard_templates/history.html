@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}History — {{ app_name }} IG{% endblock %}
+{% block body %}
+<h1>Post history</h1>
+{% if not rows %}<div class="empty">No posts yet.</div>{% endif %}
+{% if rows %}
+<table>
+  <thead><tr><th>Date</th><th>Pillar</th><th>Feature / Angle</th><th>Format</th><th>Status</th><th>Link</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td>{{ r.p.post_date }}</td>
+      <td>{{ r.p.pillar }}</td>
+      <td>{{ r.p.feature_id }} / {{ r.p.angle_id }}</td>
+      <td>{{ r.p.format.value }}</td>
+      <td>{{ r.p.status.value }}</td>
+      <td>{% if r.p.permalink %}<a href="{{ r.p.permalink }}" target="_blank">view</a>{% else %}—{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

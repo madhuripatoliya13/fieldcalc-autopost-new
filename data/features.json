@@ -1,0 +1,179 @@
+{
+  "_comment": "The 15 postable app features, derived from WEB_APP_FEATURE_HANDOFF.md. Each entry feeds the caption + image prompts. Keep facts accurate — captions must never claim a capability not listed here (prevents AI hallucination + false-claim ASO violations).",
+  "app": {
+    "name": "FieldCalc",
+    "alt_name": "Voice GPS Navigation",
+    "tagline": "GPS area measure & smart navigation in one app",
+    "play_store_id": "com.voice.gps.navigation.map.location.route",
+    "play_store_url": "https://play.google.com/store/apps/details?id=com.voice.gps.navigation.map.location.route",
+    "categories": ["GPS", "Maps & Navigation", "Land Measurement", "Tools"],
+    "audiences": ["farmers", "land owners", "real-estate agents", "surveyors", "construction", "drivers", "travelers", "field workers", "outdoor enthusiasts"]
+  },
+  "features": [
+    {
+      "id": "area-measurement",
+      "name": "GPS Area Measurement",
+      "icon": "ruler",
+      "short": "Measure any land or field area by walking it or tapping points on the map.",
+      "description": "Measure area using polygon points in GPS or manual mode. Supports Acre, Square Meter, Square Yard, Square Feet, Square Inch. Save, name, group, and share results.",
+      "keywords": ["land measurement", "area calculator", "field measure", "gps area", "acre calculator", "polygon area"],
+      "primary_benefit": "Know the exact size of any plot without hiring a surveyor.",
+      "audiences": ["farmers", "land owners", "real-estate agents", "surveyors", "construction"],
+      "use_cases": ["measure a farm field before planting", "calculate plot size for a property listing", "estimate material for fencing"]
+    },
+    {
+      "id": "distance-tracking",
+      "name": "Distance Measurement",
+      "icon": "route",
+      "short": "Measure distance along any path or line on the map or on foot.",
+      "description": "Measure distance with line/path points. Units: Feet, Mile, Yard, Meter, Kilometer. GPS or manual mode, save and share.",
+      "keywords": ["distance calculator", "measure distance on map", "path length", "gps distance"],
+      "primary_benefit": "Measure exact distances without a measuring wheel or tape.",
+      "audiences": ["construction", "field workers", "runners", "land owners"],
+      "use_cases": ["measure boundary length", "plan a fence line", "check distance between two points"]
+    },
+    {
+      "id": "poi-markers",
+      "name": "POI Markers",
+      "icon": "map-pin",
+      "short": "Drop and save points of interest anywhere on the map.",
+      "description": "Mark single map points (POI), name them, assign to groups, and sync. Great for marking specific locations on a property.",
+      "keywords": ["map markers", "save location", "point of interest", "gps marker"],
+      "primary_benefit": "Never lose track of an important spot on your land or route.",
+      "audiences": ["farmers", "field workers", "outdoor enthusiasts"],
+      "use_cases": ["mark a well or gate on a farm", "save a trailhead", "flag a problem area to revisit"]
+    },
+    {
+      "id": "route-planner",
+      "name": "Route Planner",
+      "icon": "list-checks",
+      "short": "Plan multi-stop routes with ordering, notes, and arrival windows.",
+      "description": "Create named route plans with start/end, multiple stops, drag-and-drop ordering, notes, stay time, arrival windows, urgency and completion status.",
+      "keywords": ["multi stop route", "route planner", "delivery route", "trip planner"],
+      "primary_benefit": "Organize a whole day of stops in the most efficient order.",
+      "audiences": ["drivers", "delivery", "sales reps", "field workers"],
+      "use_cases": ["plan a delivery run", "organize sales visits", "sequence site inspections"]
+    },
+    {
+      "id": "voice-navigation",
+      "name": "Voice Navigation",
+      "icon": "mic",
+      "short": "Speak your destination and navigate hands-free.",
+      "description": "Voice input to search and navigate to a destination. Keeps a voice search history with favorites.",
+      "keywords": ["voice navigation", "hands free maps", "speak destination", "voice gps"],
+      "primary_benefit": "Find and go to any place just by speaking — eyes on the road.",
+      "audiences": ["drivers", "travelers"],
+      "use_cases": ["navigate while driving without typing", "quick search by voice", "save spoken destinations"]
+    },
+    {
+      "id": "find-routes",
+      "name": "Find Routes",
+      "icon": "navigation",
+      "short": "Get directions with route alternatives, history, and favorites.",
+      "description": "Source/destination search with autocomplete, route alternatives via Google Directions, saved route history and favorites.",
+      "keywords": ["directions", "route finder", "fastest route", "navigation app"],
+      "primary_benefit": "Pick the best of several routes and save the ones you reuse.",
+      "audiences": ["drivers", "travelers", "commuters"],
+      "use_cases": ["compare route options", "save a daily commute", "favorite frequent trips"]
+    },
+    {
+      "id": "speedometer",
+      "name": "GPS Speedometer",
+      "icon": "gauge",
+      "short": "Live GPS speed with analog, digital, HUD modes and trip history.",
+      "description": "Live GPS speed in analog, digital, and map modes, HUD with themes, speed-limit warning, and full trip history (min/avg/max speed, distance, duration).",
+      "keywords": ["gps speedometer", "speed tracker", "hud speedometer", "trip tracker"],
+      "primary_benefit": "Accurate speed and trip stats even where your dashboard can't help.",
+      "audiences": ["drivers", "cyclists", "travelers"],
+      "use_cases": ["track road-trip stats", "monitor speed on a bike", "review trip history"]
+    },
+    {
+      "id": "compass",
+      "name": "Digital Compass",
+      "icon": "compass",
+      "short": "Multi-mode compass: standard, camera, map, telescope, night.",
+      "description": "Compass with standard, camera, map, telescope, satellite, and night modes for accurate direction in any condition.",
+      "keywords": ["digital compass", "camera compass", "direction finder", "night compass"],
+      "primary_benefit": "Find true direction anywhere, day or night.",
+      "audiences": ["hikers", "outdoor enthusiasts", "travelers"],
+      "use_cases": ["orient on a hike", "find direction at night", "align with a map view"]
+    },
+    {
+      "id": "gps-camera",
+      "name": "GPS Stamp Camera",
+      "icon": "camera",
+      "short": "Photos auto-stamped with location, date, and time.",
+      "description": "Capture photos stamped with location, address, date/time. Customizable stamp templates, colors, transparency, manual or automatic location.",
+      "keywords": ["gps camera", "location stamp photo", "geotag camera", "timestamp camera"],
+      "primary_benefit": "Proof-of-location photos for work, claims, and records.",
+      "audiences": ["field workers", "construction", "inspectors", "insurance"],
+      "use_cases": ["document a job site", "timestamp field evidence", "geotag inspection photos"]
+    },
+    {
+      "id": "gps-gallery",
+      "name": "GPS Photo Gallery",
+      "icon": "images",
+      "short": "All your stamped photos organized by date and location.",
+      "description": "Gallery of GPS photos grouped by date, with photo details, location on map, share and delete.",
+      "keywords": ["geotagged gallery", "photo location", "gps photos", "location gallery"],
+      "primary_benefit": "Find any field photo by when and where you took it.",
+      "audiences": ["field workers", "construction", "inspectors"],
+      "use_cases": ["browse job-site photos by date", "review a location's photo history", "share documented photos"]
+    },
+    {
+      "id": "wonder-places",
+      "name": "Wonder & Famous Places",
+      "icon": "globe",
+      "short": "Discover wonders, famous places, and travel stories.",
+      "description": "Explore wonder places, famous places, and stories with detail screens, images, and map coordinates.",
+      "keywords": ["famous places", "travel discovery", "wonders of the world", "places to visit"],
+      "primary_benefit": "Discover amazing places and plan your next trip.",
+      "audiences": ["travelers", "outdoor enthusiasts"],
+      "use_cases": ["find famous landmarks", "get travel inspiration", "explore stories about places"]
+    },
+    {
+      "id": "street-view",
+      "name": "Street View",
+      "icon": "panorama",
+      "short": "Explore any location in immersive street-level view.",
+      "description": "Street View entry and map selection with live preview; graceful fallback when unavailable.",
+      "keywords": ["street view", "360 view", "explore streets", "virtual location"],
+      "primary_benefit": "See a place at street level before you go.",
+      "audiences": ["travelers", "real-estate agents", "drivers"],
+      "use_cases": ["scout a destination", "preview a property's street", "explore far-away places"]
+    },
+    {
+      "id": "groups",
+      "name": "Measurement Groups",
+      "icon": "folder",
+      "short": "Organize your measurements into colored, toggleable groups.",
+      "description": "Create groups with name, color, and visibility. Assign measurements to groups, toggle them on the map, rename and delete.",
+      "keywords": ["organize measurements", "map groups", "field organization", "color groups"],
+      "primary_benefit": "Keep dozens of fields and plots neatly organized.",
+      "audiences": ["farmers", "land owners", "surveyors"],
+      "use_cases": ["group fields by crop", "separate client properties", "toggle a project's areas on the map"]
+    },
+    {
+      "id": "saved-measurements",
+      "name": "Saved Measurements",
+      "icon": "save",
+      "short": "Every measurement saved, searchable, editable, and synced.",
+      "description": "Saved list with detail view, edit, delete, search/filter, group filtering, thumbnails, and cross-device sync.",
+      "keywords": ["saved measurements", "measurement history", "sync measurements", "field records"],
+      "primary_benefit": "Your measurement history, always with you and backed up.",
+      "audiences": ["farmers", "surveyors", "real-estate agents"],
+      "use_cases": ["look up a past measurement", "edit and re-share a field", "filter measurements by group"]
+    },
+    {
+      "id": "nearby-location",
+      "name": "Nearby & Location",
+      "icon": "locate",
+      "short": "Find nearby places and share your exact location instantly.",
+      "description": "Current map location, nearby place shortcuts and categories, share/copy your location link, open searches in Google Maps.",
+      "keywords": ["nearby places", "share location", "current location", "find nearby"],
+      "primary_benefit": "Find what's around you and let others find you fast.",
+      "audiences": ["travelers", "drivers", "everyone"],
+      "use_cases": ["find nearby fuel or food", "share where you are", "locate services around you"]
+    }
+  ]
+}

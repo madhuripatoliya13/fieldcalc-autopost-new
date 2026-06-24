@@ -1,0 +1,5 @@
+{
+  "database_url": "sqlite:///./local_dev.db",
+  "reset_after_post_id": 12,
+  "reset_at": "2026-06-22T11:36:12.474397+00:00"
+}

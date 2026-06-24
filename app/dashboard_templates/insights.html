@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Insights — {{ app_name }} IG{% endblock %}
+{% block body %}
+<h1>Performance &amp; learning</h1>
+<p style="color:var(--muted); margin-bottom:16px;">{{ total_installs }} attributed installs · {{ ranked|length }} measured posts</p>
+
+<div class="card">
+  <strong>✨ Currently winning patterns</strong>
+  <div style="margin-top:10px;">
+    {% for h in patterns.get('hook_styles', []) %}<span class="chip">hook: {{ h }}</span>{% endfor %}
+    {% for f in patterns.get('formats', []) %}<span class="chip">format: {{ f }}</span>{% endfor %}
+    {% for k in patterns.get('keywords', []) %}<span class="chip">{{ k }}</span>{% endfor %}
+  </div>
+</div>
+
+{% if ranked %}
+<table>
+  <thead><tr><th>#</th><th>Pillar</th><th>Feature / Angle</th><th>Installs</th><th>Score</th></tr></thead>
+  <tbody>
+  {% for r in ranked %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ r.pillar }}</td>
+      <td>{{ r.feature }} / {{ r.angle }}</td>
+      <td>{{ r.installs }}</td>
+      <td>{{ r.score }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty">No measured posts yet — insights populate ~24h after the first post goes live.</div>
+{% endif %}
+{% endblock %}

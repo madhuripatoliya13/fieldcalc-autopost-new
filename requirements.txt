@@ -1,0 +1,42 @@
+# Web + scheduling
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+apscheduler==3.11.0
+jinja2==3.1.5
+python-multipart==0.0.20
+
+# Config + data
+pydantic==2.10.4
+pydantic-settings==2.7.1
+python-dotenv==1.0.1
+
+# Database (Postgres on Neon; psycopg3 driver)
+sqlalchemy==2.0.36
+psycopg[binary]==3.2.3
+alembic==1.14.0
+
+# LLMs
+google-generativeai==0.8.3
+groq==0.13.1
+
+# Imaging (Pollinations.ai FLUX primary, Pillow fallback)
+pillow==11.0.0
+playwright==1.49.1
+# openai==1.59.6  # optional: only needed when IMAGE_GEN_PROVIDER=openai (DALL-E 3)
+
+# Verification
+textstat==0.7.4
+language-tool-python==2.8.1
+
+# Content sourcing
+google-play-scraper==1.2.7
+
+# HTTP + resilience
+httpx==0.28.1
+requests==2.32.3
+tenacity==9.0.0
+
+# Ops
+sentry-sdk==2.19.2
+cloudinary>=1.40
+certifi>=2024.0

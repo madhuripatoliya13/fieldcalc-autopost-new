@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Review — {{ app_name }} IG{% endblock %}
+{% block body %}
+<div class="page-head">
+  <h1>Posts awaiting your approval ({{ cards|length }})</h1>
+  <form method="post" action="/ui/create-post">
+    <button class="create-post" type="submit" data-loading-text="Creating post...">+ Create new post</button>
+  </form>
+</div>
+
+{% if notice %}
+  <div class="notice notice-{{ notice_type }}">{{ notice }}</div>
+{% endif %}
+
+{% if not cards %}
+  <div class="empty">Nothing to review right now. Click Create new post to draft the next one.</div>
+{% endif %}
+
+{% for c in cards %}
+<div class="card">
+  <div class="review-grid">
+    <section class="preview-pane">
+      <div class="preview-frame">
+        {% for img in c.images %}
+          <img class="post-preview {{ 'active' if loop.first else '' }}" src="{{ img }}" alt="post preview {{ loop.index }}">
+        {% endfor %}
+      </div>
+      {% if c.images|length > 1 %}
+        <div class="thumb-row">
+          {% for img in c.images %}<img src="{{ img }}" alt="slide {{ loop.index }}">{% endfor %}
+        </div>
+      {% endif %}
+      {% if c.image_note %}
+        <div class="image-note image-note-{{ c.image_note.kind }}">
+          <b>{{ c.image_note.label }}</b>
+          <span>{{ c.image_note.detail }}</span>
+        </div>
+      {% endif %}
+      {% if c.image_status %}
+        <div class="image-status image-status-{{ c.image_status.status }}">
+          <div>
+            <b>
+              {% if c.image_status.status == 'running' %}Image generating
+              {% elif c.image_status.status == 'completed' %}Image ready
+              {% elif c.image_status.status == 'failed' %}Image failed
+              {% else %}Image status{% endif %}
+            </b>
+            <span>{{ c.image_status.message }}</span>
+          </div>
+          {% if c.image_status.finished_at %}
+            <small>Completed: {{ c.image_status.finished_at }}</small>
+          {% elif c.image_status.started_at %}
+            <small>Started: {{ c.image_status.started_at }}</small>
+          {% endif %}
+        </div>
+      {% endif %}
+    </section>
+
+    <section class="review-pane">
+      <div class="meta-head">
+        <div class="chips">
+          <span class="chip">{{ c.p.pillar }}</span>
+          <span class="chip">{{ c.p.feature_id }}</span>
+          <span class="chip">{{ c.p.angle_id }}</span>
+          <span class="chip">{{ c.p.format.value }}</span>
+        </div>
+        <div class="badges">
+          {% if c.v.ok %}<span class="badge b-ok">verify ok</span>{% else %}<span class="badge b-bad">blocked</span>{% endif %}
+          {% for b in c.v.blocking %}<span class="badge b-bad">{{ b }}</span>{% endfor %}
+        </div>
+      </div>
+
+      {% if c.v.warnings %}<div class="warns">⚠ {{ c.v.warnings|join(' · ') }}</div>{% endif %}
+      {% if c.link %}<div class="warns link-line">🔗 {{ c.link }}</div>{% endif %}
+
+      {% if c.strategy %}
+        <div class="strategy-box">
+          <h3>Creative strategy</h3>
+          <div class="strategy-grid">
+            <div><b>Country</b><span>{{ c.strategy.country_name }}</span></div>
+            <div><b>Image type</b><span>{{ c.strategy.image_type_label }}</span></div>
+            <div><b>Mockup</b><span>{% if c.strategy.uses_app_mockup %}{{ c.strategy.mockup_device }}{% else %}No app mockup{% endif %}</span></div>
+            <div><b>Logo</b><span>{{ c.strategy.logo_rule }}</span></div>
+            <div><b>10M+</b><span>{% if c.strategy.show_10m %}Show{% else %}Selective{% endif %}</span></div>
+            <div><b>Language</b><span>{{ c.strategy.language }}</span></div>
+            <div><b>Design variant</b><span>{% if c.strategy.visual_variant is defined %}#{{ c.strategy.visual_variant + 1 }} of 5{% if c.strategy.visual_variant_label %} · {{ c.strategy.visual_variant_label }}{% endif %}{% else %}Auto{% endif %}</span></div>
+            <div><b>Feature motif</b><span>{{ c.strategy.feature_motif or 'Feature-specific scene' }}</span></div>
+            <div><b>Asset source</b><span>{{ c.strategy.asset_source or 'Generated visual asset' }}</span></div>
+          </div>
+          <p class="strategy-note">{{ c.strategy.selection_reason }}</p>
+          <p class="strategy-note"><b>Direction:</b> {{ c.strategy.visual_direction }}</p>
+          <p class="strategy-note"><b>Mockup policy:</b> {{ c.strategy.mockup_policy }}</p>
+          <details>
+            <summary>All image type options</summary>
+            <ul class="type-list">
+              {% for t in c.strategy.available_image_types %}
+                <li><b>{{ t.label }}</b> — {{ t.description }}{% if t.uses_app_mockup %} <em>(uses Android mockup)</em>{% endif %}</li>
+              {% endfor %}
+            </ul>
+          </details>
+        </div>
+      {% endif %}
+
+      <form class="edit-form" method="post" action="/ui/edit/{{ c.p.id }}">
+        <label>Caption</label>
+        <textarea name="caption">{{ c.p.caption }}</textarea>
+        <label>Hashtags</label>
+        <input type="text" name="hashtags" value="{{ c.p.hashtags|join(' ') }}">
+        <div class="actions save-row">
+          <button class="save" type="submit">Save edits</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="approval-bar">
+    <form class="inline" method="post" action="/ui/approve/{{ c.p.id }}">
+      <button class="approve" type="submit">✓ Approve &amp; schedule</button>
+    </form>
+    <form class="inline" method="post" action="/ui/regenerate/{{ c.p.id }}">
+      <button class="regen" type="submit" data-loading-text="Regenerating text...">↻ Regenerate text</button>
+    </form>
+    <form class="inline" method="post" action="/ui/regenerate-image/{{ c.p.id }}">
+      <button class="regen-image" type="submit" data-loading-text="Generating image...">▣ Regenerate image</button>
+    </form>
+    <form class="inline" method="post" action="/ui/reject/{{ c.p.id }}">
+      <input class="reject-reason" type="text" name="reason" placeholder="reason (optional)">
+      <button class="reject" type="submit">✕ Reject</button>
+    </form>
+  </div>
+</div>
+{% endfor %}
+
+{% if recent %}
+  <section class="activity-card">
+    <h2>Recent activity</h2>
+    <div class="activity-list">
+      {% for r in recent %}
+        {% set p = r.p %}
+        <details class="activity-row">
+          <summary>
+            <div>
+              <b>Post #{{ p.id }}</b>
+              <span>{{ p.feature_id }} · {{ p.angle_id }}</span>
+            </div>
+            <span class="status-pill status-{{ p.status.value|lower }}">{{ p.status.value }}</span>
+          </summary>
+          <div class="activity-details">
+            {% if r.images %}
+              <img class="recent-preview" src="{{ r.images[0] }}" alt="recent post {{ p.id }}">
+            {% endif %}
+            <div class="activity-copy">
+              <p><b>Caption</b><span>{{ p.caption }}</span></p>
+              <p><b>Hashtags</b><span>{{ p.hashtags|join(' ') }}</span></p>
+              {% if p.publish_at %}<p><b>Scheduled</b><span>{{ p.publish_at }}</span></p>{% endif %}
+              {% if p.posted_at %}<p><b>Published</b><span>{{ p.posted_at }}</span></p>{% endif %}
+              {% if p.reject_reason %}<p><b>Reason</b><span>{{ p.reject_reason }}</span></p>{% endif %}
+              {% if p.permalink %}<p><b>Instagram</b><a href="{{ p.permalink }}">{{ p.permalink }}</a></p>{% endif %}
+              {% if r.link %}<p><b>Install link</b><span class="break-anywhere">{{ r.link }}</span></p>{% endif %}
+            </div>
+          </div>
+        </details>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

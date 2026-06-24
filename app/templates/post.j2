@@ -1,0 +1,422 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --accent: {{ accent|default("#0aa77f") }};
+    --accent-dim: color-mix(in srgb, var(--accent) 20%, transparent);
+    --accent-glow: color-mix(in srgb, var(--accent) 22%, transparent);
+    --ink: #ffffff;
+    --muted: rgba(255,255,255,0.62);
+    --glass: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.11);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: {{ w }}px; height: {{ h }}px; overflow: hidden; }
+
+  body {
+    font-family: -apple-system, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background:
+      radial-gradient(ellipse 90% 70% at 78% 30%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 65%),
+      linear-gradient(160deg, #070b11 0%, #0d1520 55%, #080e18 100%);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Noise texture for depth */
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+    pointer-events: none;
+    opacity: 0.55;
+    z-index: 0;
+  }
+
+  .poster {
+    width: 100%;
+    height: 100%;
+    padding: {{ (pad * 0.58)|int }}px {{ (pad * 0.68)|int }}px;
+    display: flex;
+    flex-direction: column;
+    gap: {{ (gap.sub * 0.42)|int }}px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── TOP BAR ─────────────────────────────────────────── */
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 0 0 auto;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .brand img {
+    width: {{ (fs.brand * 1.35)|int }}px;
+    height: {{ (fs.brand * 1.35)|int }}px;
+    border-radius: {{ (fs.brand * 0.3)|int }}px;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
+  .brand .name {
+    font-size: {{ (fs.brand * 0.92)|int }}px;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+    color: #fff;
+  }
+  .brand .pub {
+    font-size: {{ (fs.eyebrow * 0.68)|int }}px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .tag {
+    font-size: {{ (fs.eyebrow * 0.76)|int }}px;
+    font-weight: 800;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1.5px solid color-mix(in srgb, var(--accent) 38%, transparent);
+    border-radius: 999px;
+    padding: 9px 20px;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+  }
+
+  /* ── HERO ────────────────────────────────────────────── */
+  .hero {
+    flex: 1 1 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: {{ (pad * 0.55)|int }}px;
+    align-items: center;
+  }
+
+  /* ── COPY COLUMN ─────────────────────────────────────── */
+  .copy {
+    display: flex;
+    flex-direction: column;
+    gap: {{ (gap.sub * 0.44)|int }}px;
+  }
+  .eyebrow-line {
+    font-size: {{ (fs.eyebrow * 0.72)|int }}px;
+    font-weight: 750;
+    color: var(--accent);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .headline {
+    font-size: {{ (fs.title * 0.64)|int }}px;
+    font-weight: 970;
+    line-height: 1.04;
+    letter-spacing: -0.8px;
+    color: #fff;
+  }
+  .headline span { display: block; }
+  .sub {
+    font-size: {{ (fs.sub * 0.65)|int }}px;
+    font-weight: 520;
+    color: var(--muted);
+    line-height: 1.38;
+    max-width: 540px;
+  }
+  .bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .bullets li {
+    list-style: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: {{ (fs.bullet * 0.54)|int }}px;
+    font-weight: 660;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.28;
+  }
+  .bullets li::before {
+    content: "";
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 5px;
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .chip {
+    font-size: {{ (fs.chip * 0.8)|int }}px;
+    font-weight: 750;
+    color: rgba(255,255,255,0.88);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 10px 20px;
+    backdrop-filter: blur(8px);
+  }
+  .badges {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: {{ (fs.swipe * 0.60)|int }}px;
+    font-weight: 680;
+    color: var(--muted);
+  }
+  .badge strong {
+    color: #fff;
+    font-size: {{ (fs.cta * 0.64)|int }}px;
+    font-weight: 900;
+  }
+  .badge-sep {
+    width: 1px;
+    height: 22px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ── PHONE MOCKUP ────────────────────────────────────── */
+  .phone-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+  }
+  /* Glow halo behind phone */
+  .phone-wrap::before {
+    content: "";
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 68%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .phone {
+    position: relative;
+    width: min({{ (w * 0.34)|int }}px, 352px);
+    aspect-ratio: 9/19.5;
+    background: #111827;
+    border-radius: {{ (w * 0.056)|int }}px;
+    border: {{ [5, (w * 0.009)|int]|max }}px solid #1e2d42;
+    box-shadow:
+      0 0 0 {{ [2, (w * 0.003)|int]|max }}px #2a3c54,
+      inset 0 0 0 1px rgba(255,255,255,0.05),
+      0 48px 120px rgba(0,0,0,0.75),
+      0 0 70px var(--accent-glow);
+    overflow: hidden;
+    z-index: 2;
+  }
+  /* Notch */
+  .phone::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32%;
+    height: {{ [14, (w * 0.025)|int]|max }}px;
+    background: #111827;
+    border-radius: 0 0 12px 12px;
+    z-index: 10;
+  }
+  /* Shine overlay */
+  .phone::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, rgba(255,255,255,0.07) 0%, transparent 45%);
+    pointer-events: none;
+    z-index: 8;
+  }
+  .phone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+  .phone .no-screen {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 28%, #1a2a3a) 0%, #050d18 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: {{ (fs.icon * 0.65)|int }}px;
+  }
+
+  /* ── BOTTOM BAR ──────────────────────────────────────── */
+  .bottom {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 999px;
+    padding: 17px 32px;
+    font-size: {{ (fs.cta * 0.72)|int }}px;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    box-shadow:
+      0 14px 36px color-mix(in srgb, var(--accent) 38%, transparent),
+      inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .swipe-hint {
+    color: var(--muted);
+    font-size: {{ (fs.swipe * 0.76)|int }}px;
+    font-weight: 750;
+  }
+  .dots { display: flex; gap: 8px; align-items: center; }
+  .dots i {
+    display: block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+  }
+  .dots i.on {
+    width: 26px;
+    border-radius: 5px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  /* ── LAYOUT VARIANTS ─────────────────────────────────── */
+  {% if kind == 'cta' %}
+  .hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .copy { align-items: center; }
+  .phone-wrap { display: none; }
+  .cta-pill { font-size: {{ (fs.cta * 0.9)|int }}px; padding: 24px 56px; }
+  {% endif %}
+
+  {% if kind in ['single', 'story'] %}
+  .hero { grid-template-columns: 1.05fr 0.95fr; }
+  {% endif %}
+
+  {% if kind == 'story' %}
+  .poster { padding-top: 62px; padding-bottom: 66px; }
+  .headline { font-size: {{ (fs.title * 0.66)|int }}px; }
+  .sub { font-size: {{ (fs.sub * 0.72)|int }}px; }
+  {% endif %}
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- TOP BAR -->
+  <div class="top">
+    <div class="brand">
+      {% if app_icon_url %}<img src="{{ app_icon_url }}" alt="">{% endif %}
+      <div>
+        <div class="name">{{ app_name }}</div>
+        <div class="pub">{{ publisher }}</div>
+      </div>
+    </div>
+    {% if eyebrow %}<div class="tag">{{ eyebrow }}</div>{% endif %}
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+
+    <!-- COPY -->
+    <div class="copy">
+      {% if kind == 'hook' or kind == 'single' or kind == 'story' %}
+        {% if eyebrow %}<div class="eyebrow-line">{{ eyebrow }}</div>{% endif %}
+      {% endif %}
+
+      <div class="headline">
+        {% if title_lines %}
+          {% for line in title_lines %}<span>{{ line }}</span>{% endfor %}
+        {% else %}
+          {{ title }}
+        {% endif %}
+      </div>
+
+      {% if subtitle %}<div class="sub">{{ subtitle }}</div>{% endif %}
+
+      {% if bullets %}
+        <ul class="bullets">{% for b in bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+      {% endif %}
+
+      {% if chips %}
+        <div class="chips">{% for c in chips %}<span class="chip">{{ c }}</span>{% endfor %}</div>
+      {% endif %}
+
+      <div class="badges">
+        {% if show_10m %}
+          <div class="badge"><strong>{{ downloads }}</strong> Downloads</div>
+          <div class="badge-sep"></div>
+        {% endif %}
+        <div class="badge"><strong>⭐ {{ rating }}</strong></div>
+        {% if audience %}
+          <div class="badge-sep"></div>
+          <div class="badge">For {{ audience }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- PHONE MOCKUP -->
+    {% if kind != 'cta' %}
+    <div class="phone-wrap">
+      <div class="phone">
+        {% if screenshot_url %}
+          <img src="{{ screenshot_url }}" alt="{{ title }}">
+        {% else %}
+          <div class="no-screen">{{ icon }}</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom">
+    {% if kind in ['cta', 'single', 'story'] %}
+      <span class="cta-pill">{{ cta_text }}</span>
+    {% else %}
+      <span class="swipe-hint">{{ footer }}</span>
+    {% endif %}
+    {% if total and total > 1 %}
+      <div class="dots">
+        {% for i in range(total) %}<i class="{{ 'on' if i == index else '' }}"></i>{% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+</body>
+</html>

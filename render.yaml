@@ -1,0 +1,50 @@
+# Render Blueprint. Deploy: New > Blueprint > point at this repo.
+# Free web tier sleeps when idle — the external cron (cron-job.org) wakes it.
+services:
+  - type: web
+    name: fieldcalc-ig-autopost
+    runtime: python
+    plan: free
+    rootDir: instagram-autopost
+    # Chromium is the primary image engine; if its system libs are missing on the
+    # free tier the app falls back to Pillow automatically, so the build still works.
+    buildCommand: "pip install -r requirements.txt && python -m playwright install chromium"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: DRY_RUN
+        value: "true"            # flip to false only after Meta approval + a clean test
+      - key: TIMEZONE
+        value: "Asia/Kolkata"
+      - key: DATABASE_URL        # Neon connection string
+        sync: false
+      - key: RUN_TOKEN
+        sync: false
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: IG_USER_ID
+        sync: false
+      - key: IG_ACCESS_TOKEN
+        sync: false
+      - key: META_APP_ID
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+      - key: GRAPH_BASE_URL
+        value: "https://graph.instagram.com/v21.0"   # Instagram Business Login token
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: PUBLIC_ASSET_BASE_URL
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: HEALTHCHECK_PING_URL
+        sync: false
+      - key: SENTRY_DSN
+        sync: false

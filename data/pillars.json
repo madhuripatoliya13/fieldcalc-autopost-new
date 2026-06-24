@@ -1,0 +1,65 @@
+{
+  "_comment": "Content pillars beyond feature ads. Weights are the long-run target mix (sum=1.0; seasonal is override-only, not in the balance). weekday_theme softly biases which pillar a given weekday leans toward (0=Mon..6=Sun). guidance/format/display drive caption + image synthesis. pools hold the rotating content items for non-feature, non-review pillars.",
+  "weights": {
+    "feature": 0.30,
+    "education": 0.18,
+    "tips": 0.18,
+    "social_proof": 0.16,
+    "interactive": 0.18
+  },
+  "weekday_theme": {
+    "0": "tips",
+    "1": "feature",
+    "2": "education",
+    "3": "feature",
+    "4": "social_proof",
+    "5": "interactive",
+    "6": "feature"
+  },
+  "display": {
+    "feature": "Feature",
+    "education": "Did You Know",
+    "tips": "Pro Tip",
+    "interactive": "Your Turn",
+    "social_proof": "User Love",
+    "seasonal": "Seasonal"
+  },
+  "guidance": {
+    "education": "Teach ONE concept clearly and simply. Build trust, do not hard-sell. End with a soft nudge to the app.",
+    "tips": "Give one practical, save-worthy tip for the audience. Specific and actionable.",
+    "interactive": "Ask a short, inviting question that sparks comments. No selling.",
+    "social_proof": "Share a real user's positive experience as warm, credible social proof.",
+    "seasonal": "Tie the app to the season or holiday naturally and warmly. Keep it timely."
+  },
+  "format": {
+    "education": "SINGLE",
+    "tips": "SINGLE",
+    "interactive": "SINGLE",
+    "social_proof": "SINGLE",
+    "seasonal": "SINGLE"
+  },
+  "pools": {
+    "education": [
+      {"id": "gps-accuracy", "title": "How GPS measures your land", "short": "GPS reads satellite signals to fix each corner of your plot, then calculates the area between those points.", "benefit": "Understand why digital measuring is trustworthy.", "keywords": ["gps accuracy", "land measurement"], "points": ["Satellites fix each corner", "Math computes the area", "No tape measure needed"], "icon": "globe", "cta": "See it in the app"},
+      {"id": "acres-hectares", "title": "Acres vs hectares, made simple", "short": "1 hectare is about 2.47 acres. Knowing both helps when buyers and sellers use different units.", "benefit": "Never get confused by land units again.", "keywords": ["acres", "hectares"], "points": ["1 hectare = 2.47 acres", "1 acre = 0.4 hectares", "Switch units instantly in-app"], "icon": "ruler", "cta": "Convert units in the app"},
+      {"id": "lat-lng", "title": "Latitude & longitude, explained", "short": "Latitude lines run east-west, longitude lines run north-south. Together they pinpoint any spot on Earth.", "benefit": "Read any coordinate with confidence.", "keywords": ["latitude longitude", "coordinates"], "points": ["Latitude = north/south", "Longitude = east/west", "Two numbers locate anything"], "icon": "map-pin", "cta": "Find any coordinate in-app"},
+      {"id": "polygon-area", "title": "The math behind area from points", "short": "From a few GPS corners, the app uses the shoelace formula to compute the exact enclosed area.", "benefit": "Trust the number behind your measurement.", "keywords": ["area calculation", "polygon"], "points": ["Mark the corners", "Shoelace formula runs", "Exact area appears"], "icon": "list-checks", "cta": "Try a measurement"},
+      {"id": "units-when", "title": "Feet, meters, miles: when to use which", "short": "Use meters for fields, feet for small jobs, miles or kilometers for travel. The right unit makes numbers easier to act on.", "benefit": "Pick the unit that fits the job.", "keywords": ["measurement units", "distance"], "points": ["Meters for fields", "Feet for small jobs", "Km/miles for travel"], "icon": "route", "cta": "Switch units in the app"}
+    ],
+    "tips": [
+      {"id": "fence-estimate", "title": "Estimate fencing in minutes", "short": "Measure your boundary distance first, then multiply by your fence cost per unit length. No guesswork.", "benefit": "Budget fencing without a contractor visit.", "keywords": ["fencing", "boundary"], "points": [], "icon": "route", "cta": "Measure your boundary"},
+      {"id": "verify-plot", "title": "Verify a plot before you buy", "short": "Walk the plot and measure the area yourself before signing. Confirm it matches the listing.", "benefit": "Avoid paying for land you don't get.", "keywords": ["buy land", "plot size"], "points": [], "icon": "ruler", "cta": "Measure before you buy"},
+      {"id": "trip-stops", "title": "Plan a multi-stop trip the smart way", "short": "Add all your stops, drag them into the best order, and follow one optimized route.", "benefit": "Save fuel and time on busy days.", "keywords": ["route planner", "multi stop"], "points": [], "icon": "list-checks", "cta": "Plan your route"},
+      {"id": "save-photos", "title": "Document work with stamped photos", "short": "Use the GPS camera to capture proof-of-location photos with date and address baked in.", "benefit": "Have evidence for claims and records.", "keywords": ["gps camera", "proof photo"], "points": [], "icon": "camera", "cta": "Try the GPS camera"}
+    ],
+    "interactive": [
+      {"id": "poll-units", "title": "Acres or hectares — which do you use?", "short": "Drop your answer in the comments. We're curious what your region prefers!", "benefit": "Tell us how you measure.", "keywords": ["land units", "community"], "points": [], "icon": "globe", "cta": "Comment below"},
+      {"id": "biggest-field", "title": "What's the biggest area you've measured?", "short": "Share your record in the comments — acres, hectares, anything goes.", "benefit": "Show off your biggest measurement.", "keywords": ["land measurement", "community"], "points": [], "icon": "ruler", "cta": "Comment your record"},
+      {"id": "voice-or-type", "title": "Voice navigation or typing — your pick?", "short": "Do you speak your destination or type it? Let us know how you navigate.", "benefit": "Tell us your style.", "keywords": ["voice navigation", "community"], "points": [], "icon": "mic", "cta": "Vote in the comments"}
+    ]
+  },
+  "social_proof_fallback": [
+    {"id": "loved-everywhere", "title": "Loved by land owners everywhere", "short": "Thousands use FieldCalc to measure plots, plan routes, and document work in the field.", "benefit": "Join a growing community measuring smarter.", "keywords": ["fieldcalc community", "trusted app"], "points": [], "icon": "save", "cta": "Join them — link in bio"},
+    {"id": "trusted-daily", "title": "Trusted in the field every day", "short": "Farmers, surveyors, and drivers rely on FieldCalc for accurate measurement on the go.", "benefit": "See why people keep it on their home screen.", "keywords": ["trusted app", "field work"], "points": [], "icon": "save", "cta": "Try it free — link in bio"}
+  ]
+}
