@@ -57,6 +57,29 @@ def health() -> dict:
     }
 
 
+@app.get("/debug/token", dependencies=[Depends(require_run_token)])
+def debug_token() -> dict:
+    """Diagnostics: validate the IG token and read the content-publishing quota
+    directly from Meta (Render can reach Meta even when the office network can't)."""
+    import certifi
+    import requests
+    base = settings.graph_base_url
+    tok = settings.ig_access_token
+    uid = settings.ig_user_id
+    out: dict = {}
+    try:
+        r = requests.get(f"{base}/me", params={"fields": "id,username,account_type", "access_token": tok}, timeout=30, verify=certifi.where())
+        out["me"] = {"status": r.status_code, "body": r.json() if r.headers.get("content-type", "").startswith("application/json") else r.text[:300]}
+    except Exception as e:  # noqa: BLE001
+        out["me"] = {"error": str(e)}
+    try:
+        r = requests.get(f"{base}/{uid}/content_publishing_limit", params={"fields": "quota_usage,config", "access_token": tok}, timeout=30, verify=certifi.where())
+        out["publishing_limit"] = {"status": r.status_code, "body": r.json() if r.headers.get("content-type", "").startswith("application/json") else r.text[:300]}
+    except Exception as e:  # noqa: BLE001
+        out["publishing_limit"] = {"error": str(e)}
+    return out
+
+
 @app.post("/run-daily", dependencies=[Depends(require_run_token)])
 def run_daily() -> dict:
     """External cron hits this daily: refresh token if due, then draft today's post."""
