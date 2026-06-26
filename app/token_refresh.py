@@ -17,7 +17,7 @@ from app.database import AppToken, SessionLocal
 log = logging.getLogger("autopost")
 settings = get_settings()
 
-GRAPH = "https://graph.facebook.com/v21.0"
+GRAPH = "https://graph.instagram.com"   # IG Login tokens use graph.instagram.com
 REFRESH_WINDOW_DAYS = 12
 TOKEN_NAME = "ig_long_lived"
 
@@ -62,13 +62,14 @@ def maybe_refresh() -> dict:
     if not needs:
         return {"refreshed": False, "reason": "not due", "expires_at": tok.expires_at.isoformat()}
 
+    # IG Login ("IGAA…") tokens refresh via ig_refresh_token grant.
+    # Only the current token is needed — no client_id/secret.
+    # Token must be at least 24h old and not yet expired.
     r = httpx.get(
-        f"{GRAPH}/oauth/access_token",
+        f"{GRAPH}/refresh_access_token",
         params={
-            "grant_type": "fb_exchange_token",
-            "client_id": settings.meta_app_id,
-            "client_secret": settings.meta_app_secret,
-            "fb_exchange_token": current_token(),
+            "grant_type": "ig_refresh_token",
+            "access_token": current_token(),
         },
         timeout=30,
     )

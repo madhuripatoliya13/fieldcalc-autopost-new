@@ -90,10 +90,27 @@ def _post(path: str, data: dict) -> dict:
         if r.status_code >= 500 or r.status_code == 429:
             raise TransientError(f"{r.status_code}: {r.text}")
         if r.status_code >= 400:
+            _log_meta_error(r)
             raise PermanentError(f"{r.status_code}: {r.text}")
         return r.json()
 
     return _do()
+
+
+def _log_meta_error(r: requests.Response) -> None:
+    """Log the full Meta error payload so fbtrace_id / error_subcode appear in Render logs."""
+    try:
+        err = r.json().get("error", {})
+        log.error(
+            "Meta API error: code=%s subcode=%s type=%s fbtrace=%s msg=%s",
+            err.get("code"),
+            err.get("error_subcode"),
+            err.get("type"),
+            err.get("fbtrace_id"),
+            err.get("message"),
+        )
+    except Exception:  # noqa: BLE001
+        log.error("Meta API error (raw): %s", r.text[:500])
 
 
 def _get(path: str, params: dict) -> dict:
@@ -106,6 +123,7 @@ def _get(path: str, params: dict) -> dict:
         if r.status_code >= 500 or r.status_code == 429:
             raise TransientError(f"{r.status_code}: {r.text}")
         if r.status_code >= 400:
+            _log_meta_error(r)
             raise PermanentError(f"{r.status_code}: {r.text}")
         return r.json()
 
