@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException
 from fastapi.staticfiles import StaticFiles
 
 from app import attribution, backup, dashboard, digest, insights, learning, ops, pipeline, token_refresh
@@ -87,6 +87,28 @@ def run_daily() -> dict:
     result = pipeline.generate_daily()
     ops.ping_healthcheck()  # dead-man's-switch: prove the daily job ran
     return result
+
+
+def _run_daily_background() -> None:
+    """Cron-safe daily job body.
+
+    cron-job.org free jobs time out after ~30 seconds. Image generation can take
+    longer than that, especially when Render is waking from sleep, so the cron
+    endpoint returns immediately and this function continues in the app process.
+    """
+    token_refresh.maybe_refresh()
+    pipeline.generate_daily()
+    ops.ping_healthcheck()
+
+
+@app.post("/cron/run-daily", dependencies=[Depends(require_run_token)])
+def cron_run_daily(background_tasks: BackgroundTasks) -> dict:
+    """Fast cron trigger: acknowledge quickly, generate the post in background."""
+    background_tasks.add_task(_run_daily_background)
+    return {
+        "status": "accepted",
+        "message": "Daily post generation started in background. Check the dashboard in a few minutes.",
+    }
 
 
 @app.get("/preflight", dependencies=[Depends(require_run_token)])

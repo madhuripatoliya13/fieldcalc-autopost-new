@@ -2,6 +2,7 @@
 from fastapi.testclient import TestClient
 
 from app import ops
+from app.config import get_settings
 from app.database import Post, PostStatus, SessionLocal
 from app.main import app
 
@@ -59,10 +60,10 @@ def test_ui_approve_transitions_state():
     assert r.status_code == 303
     assert "approved" in r.headers["location"]
     with SessionLocal() as s:
-        assert s.get(Post, pid).status == PostStatus.APPROVED
+        assert s.get(Post, pid).status == PostStatus.PUBLISHED
     page = client.get(r.headers["location"], auth=AUTH)
     assert "Recent activity" in page.text
-    assert "APPROVED" in page.text
+    assert "PUBLISHED" in page.text
 
 
 def test_ui_reject_transitions_state():
@@ -91,7 +92,7 @@ def test_ui_create_post_after_approve():
     with SessionLocal() as s:
         approved = s.get(Post, pid)
         pending = s.query(Post).filter(Post.status == PostStatus.PENDING_APPROVAL).all()
-        assert approved.status == PostStatus.APPROVED
+        assert approved.status == PostStatus.PUBLISHED
         assert len(pending) == 1
         assert pending[0].id != pid
 
@@ -109,6 +110,22 @@ def test_ui_edit_updates_caption():
 
 def test_preflight_ok_in_dry_run():
     assert ops.preflight()["ok"] is True
+
+
+def test_cron_run_daily_accepts_background_job(monkeypatch):
+    calls = []
+
+    def fake_daily_background():
+        calls.append("ran")
+
+    from app import main
+
+    monkeypatch.setattr(main, "_run_daily_background", fake_daily_background)
+    r = client.post("/cron/run-daily", headers={"X-Run-Token": get_settings().run_token})
+
+    assert r.status_code == 200
+    assert r.json()["status"] == "accepted"
+    assert calls == ["ran"]
 
 
 def test_plan_page_shows_feature_angle_matrix():
