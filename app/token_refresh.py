@@ -50,8 +50,12 @@ def current_token() -> str:
 
 def maybe_refresh() -> dict:
     """Refresh if within the window. Returns a small status dict for logging/alerts."""
-    if settings.dry_run and not settings.meta_app_secret:
-        return {"refreshed": False, "reason": "dry_run / no secret configured"}
+    # DRY_RUN is a hard "touch nothing on Meta" switch: skip the refresh entirely so a
+    # paused or action-blocked account never receives stray API calls (repeated blocked
+    # calls can EXTEND a Meta action block). Publishing already honors dry_run in
+    # instagram.py — this makes refresh consistent with it.
+    if settings.dry_run:
+        return {"refreshed": False, "reason": "dry_run — Meta calls disabled"}
 
     with SessionLocal() as s:
         tok = s.query(AppToken).filter_by(name=TOKEN_NAME).one_or_none()
