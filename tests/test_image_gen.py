@@ -2,7 +2,7 @@ import io
 
 from PIL import Image
 
-from app.image_gen import create_marketing_composite
+from app.image_gen import build_scenario_prompt, create_marketing_composite
 
 
 def _background_bytes() -> bytes:
@@ -82,3 +82,14 @@ def test_missing_screenshot_does_not_render_blank_phone():
         if r < 80 and g > 110 and b > 170:
             blue_placeholder_pixels += 1
     assert blue_placeholder_pixels < 2
+
+
+def test_people_prompts_avoid_visible_faces():
+    prompt = build_scenario_prompt(
+        {"id": "gps-camera", "name": "GPS Stamp Camera"},
+        {"name": "Tutorial / How-To"},
+        {},
+    ).lower()
+
+    assert "face not visible" in prompt or "no visible face" in prompt
+    assert "no distorted face" in prompt

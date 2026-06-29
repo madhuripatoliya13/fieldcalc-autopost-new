@@ -36,46 +36,52 @@ POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
 # only on selected variants.
 PROMPT_SUFFIX = (
     ", premium realistic commercial photography, cinematic natural light, "
-    "ultra sharp, vivid but natural colors, no text, no logos, no watermarks, square 1:1"
+    "ultra sharp, vivid but natural colors, over the shoulder or back view, "
+    "no visible face, no distorted face, no close-up face, no malformed hands, "
+    "no text, no logos, no watermarks, square 1:1"
 )
 
 # Scenic/environment backgrounds. The app UI is composited separately only when a
 # real matching screenshot is available, so the AI never invents fake UI.
 SCENARIO_PROMPTS: dict[str, str] = {
     "area-measurement": (
-        "Real Indian farmer standing in a green crop field holding a smartphone, "
-        "wide rural farmland, clear field boundaries, warm sunrise light, practical "
-        "land measurement work, documentary commercial photography"
+        "Indian farmer seen from behind and slightly side angle in a green crop field, "
+        "holding a smartphone at chest level, face not visible, wide rural farmland, "
+        "clear field boundaries, practical land measurement work"
     ),
     "distance-tracking": (
-        "Field survey worker in safety vest walking along a farm boundary with a "
-        "smartphone, open agricultural land, visible path line direction, warm "
-        "golden hour, realistic commercial photography"
+        "Field survey worker seen from behind in safety vest walking along a farm "
+        "boundary with smartphone, face hidden, open agricultural land, visible path "
+        "direction, warm golden hour"
     ),
     "poi-markers": (
-        "Delivery rider and small business storefront street scene, smartphone in "
-        "hand, important place marking context, warm city daylight, realistic "
-        "lifestyle commercial photography"
+        "Delivery rider from rear three-quarter view near small business storefront, "
+        "helmet on, face not visible, smartphone in hand, important place marking "
+        "context, warm city daylight"
     ),
     "route-planner": (
-        "Driver planning a multi stop trip inside a clean car, highway and city roads "
-        "visible through windshield, sunset travel mood, realistic cinematic photo"
+        "Over shoulder view of driver planning a multi stop trip inside a clean car, "
+        "driver face not visible, highway and city roads visible through windshield, "
+        "sunset travel mood"
     ),
     "voice-navigation": (
-        "Driver using hands free navigation on an open highway, one hand safely on "
-        "steering wheel, warm sunset road, cinematic depth of field, realistic photo"
+        "Driver POV from back seat using hands free navigation on an open highway, "
+        "no face visible, one hand safely on steering wheel, warm sunset road, "
+        "cinematic depth of field"
     ),
     "speedometer": (
-        "Motorcycle rider on a clear road with motion blur, speed tracking context, "
-        "city lights in background, dynamic realistic commercial photography"
+        "Motorcycle rider from rear view on a clear road with motion blur, helmet "
+        "hides face, speed tracking context, city lights in background, dynamic "
+        "commercial photography"
     ),
     "compass": (
-        "Outdoor traveler holding a phone while standing on a mountain viewpoint, "
-        "clear directional exploration context, dramatic sky, realistic adventure photo"
+        "Outdoor traveler from behind holding a phone while standing on a mountain "
+        "viewpoint, face not visible, clear directional exploration context, dramatic sky"
     ),
     "gps-camera": (
-        "Construction site inspector taking a photo with smartphone, visible location "
-        "proof context, road work and field boundary behind, realistic daylight photo"
+        "Construction site inspector from behind wearing hard hat and safety vest, "
+        "face fully hidden, holding smartphone to document a job site, visible road "
+        "work, machinery, field boundary markers, location proof context"
     ),
     "gps-gallery": (
         "Beautiful golden hour landscape with a tranquil lake reflecting orange and pink "
@@ -94,12 +100,13 @@ SCENARIO_PROMPTS: dict[str, str] = {
         "blurred bokeh of street lamps, romantic travel destination atmosphere"
     ),
     "groups": (
-        "Two field workers reviewing multiple land plots on a smartphone in green "
-        "farmland, organized project work, bright natural light, realistic photo"
+        "Two field workers from behind reviewing multiple land plots on a smartphone "
+        "in green farmland, faces not visible, organized project work, bright natural light"
     ),
     "saved-measurements": (
-        "Land surveyor at a desk with printed field maps, measuring tape and phone, "
-        "saved project records context, clean professional daylight photography"
+        "Hands-only desk scene of land surveyor with printed field maps, measuring "
+        "tape and smartphone, no face visible, saved project records context, clean "
+        "professional daylight photography"
     ),
     "nearby-location": (
         "Aerial top-down view of a busy city downtown area at dusk, "
@@ -123,7 +130,8 @@ def build_scenario_prompt(feature: dict, angle: dict, content: dict) -> str:
     if not base:
         benefit = (feature or {}).get("primary_benefit") or (feature or {}).get("short") or ""
         base = (
-            "Person outdoors in a relevant environment for a GPS navigation app, "
+            "Realistic over shoulder or back-view scene in a relevant environment "
+            "for a GPS navigation app, no visible face, no close-up face, "
             + (f"{benefit.rstrip('.')}, " if benefit else "")
             + "professional lifestyle photography"
         )
@@ -521,6 +529,21 @@ def _draw_path_overlay(canvas: Image.Image, feature_id: str, accent: tuple[int, 
             d.text((x + 78, y), label, font=_font(16, bold=True), fill=white, anchor="mm")
             d.ellipse([x - 17, y - 17, x + 17, y + 17], fill=green, outline=white, width=3)
             d.polygon([(x, y + 30), (x - 10, y + 12), (x + 10, y + 12)], fill=green)
+    elif feature_id == "gps-camera":
+        card = [95, 332, 505, 520]
+        d.rounded_rectangle(card, radius=24, fill=(8, 13, 22, 218), outline=white, width=2)
+        d.rectangle([126, 370, 208, 432], fill=(*accent, 230))
+        d.ellipse([146, 383, 188, 425], outline=white, width=5)
+        d.rectangle([160, 358, 192, 376], fill=white)
+        d.text((236, 370), "GPS STAMP", font=_font(27, bold=True), fill=white)
+        d.text((236, 405), "Date • Time • Address", font=_font(20, bold=True), fill=(205, 218, 230))
+        d.rounded_rectangle([126, 455, 468, 492], radius=12, fill=(255, 255, 255, 238))
+        d.text((145, 474), "Lat 21.1702  •  Long 72.8311", font=_font(17, bold=True),
+               fill=(18, 28, 42), anchor="lm")
+        for x, y in [(665, 320), (822, 405), (720, 590)]:
+            d.line([(x, y - 34), (x, y + 34)], fill=white, width=4)
+            d.line([(x - 34, y), (x + 34, y)], fill=white, width=4)
+            d.ellipse([x - 12, y - 12, x + 12, y + 12], fill=green, outline=white, width=3)
     elif feature_id == "speedometer":
         cx, cy, r = 540, 510, 160
         d.arc([cx - r, cy - r, cx + r, cy + r], 205, 335, fill=white, width=16)
