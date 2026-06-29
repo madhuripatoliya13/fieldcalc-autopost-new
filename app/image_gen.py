@@ -84,9 +84,9 @@ SCENARIO_PROMPTS: dict[str, str] = {
         "work, machinery, field boundary markers, location proof context"
     ),
     "gps-gallery": (
-        "Beautiful golden hour landscape with a tranquil lake reflecting orange and pink "
-        "sunset sky, trees silhouetted on the banks, misty soft light, "
-        "travel photography mood, National Geographic style"
+        "Hands-only scene of a field worker holding a smartphone while reviewing "
+        "geotagged work photos outdoors, no face visible, photo gallery and location "
+        "memory context, natural landscape behind, warm realistic daylight"
     ),
     "wonder-places": (
         "Stunning wide-angle photo of the Taj Mahal at golden hour, "
@@ -376,12 +376,12 @@ def _feature_badges(feature: dict, content: dict) -> list[tuple[str, str]]:
         sub = ""
         if i < len(uses):
             sub = uses[i]
-        badges.append((title[:16] if title else "", sub[:26] if sub else ""))
+        badges.append((title if title else "", sub if sub else ""))
     # Drop empty badges; guarantee at least the benefit as one badge.
     badges = [(t, s) for (t, s) in badges if t or s]
     if not badges:
         benefit = feat.get("primary_benefit") or feat.get("short") or "Trusted by 10M+ users"
-        badges = [(feat.get("name", "FieldCalc")[:16], benefit[:26])]
+        badges = [(feat.get("name", "FieldCalc"), benefit)]
     return badges[:4]
 
 
@@ -465,9 +465,10 @@ def _draw_story_cards(canvas: Image.Image, feature: dict, content: dict, accent:
                   fill=(255, 255, 255), width=4)
         tfont = _font(20, bold=True)
         sfont = _font(16)
-        draw.text((x1 + 74, y1 + 22), (title or "Feature").upper(), font=tfont, fill=(14, 22, 36))
+        title_lines = _fit_lines(draw, (title or "Feature").upper(), tfont, x2 - x1 - 92, 1)
+        draw.text((x1 + 74, y1 + 22), title_lines[0], font=tfont, fill=(14, 22, 36))
         for i, line in enumerate(_fit_lines(draw, subtitle or "", sfont, x2 - x1 - 92, 2)):
-            draw.text((x1 + 74, y1 + 50 + i * 20), line, font=sfont, fill=(80, 94, 110))
+            draw.text((x1 + 74, y1 + 50 + i * 19), line, font=sfont, fill=(80, 94, 110))
 
 
 FEATURE_CTA: dict[str, str] = {
@@ -544,6 +545,27 @@ def _draw_path_overlay(canvas: Image.Image, feature_id: str, accent: tuple[int, 
             d.line([(x, y - 34), (x, y + 34)], fill=white, width=4)
             d.line([(x - 34, y), (x + 34, y)], fill=white, width=4)
             d.ellipse([x - 12, y - 12, x + 12, y + 12], fill=green, outline=white, width=3)
+    elif feature_id == "gps-gallery":
+        cards = [(112, 330), (278, 390), (444, 336)]
+        for i, (x, y) in enumerate(cards):
+            w, h = 152, 190
+            d.rounded_rectangle([x + 8, y + 10, x + w + 8, y + h + 10], radius=18, fill=(0, 0, 0, 70))
+            d.rounded_rectangle([x, y, x + w, y + h], radius=18, fill=(255, 255, 255, 238))
+            d.rounded_rectangle([x + 12, y + 12, x + w - 12, y + 112], radius=12,
+                                fill=((88, 150, 92) if i == 0 else (80, 130, 170) if i == 1 else (180, 120, 74)))
+            d.ellipse([x + 28, y + 30, x + 64, y + 66], fill=(255, 210, 90, 220))
+            d.polygon([(x + 12, y + 112), (x + 62, y + 70), (x + 112, y + 112)], fill=(38, 100, 64))
+            d.polygon([(x + 52, y + 112), (x + 112, y + 62), (x + 140, y + 112)], fill=(50, 116, 74))
+            d.ellipse([x + 18, y + 132, x + 40, y + 154], fill=green)
+            d.polygon([(x + 29, y + 166), (x + 20, y + 150), (x + 38, y + 150)], fill=green)
+            d.text((x + 50, y + 134), ["Field", "Route", "Site"][i], font=_font(17, bold=True),
+                   fill=(18, 28, 42))
+            d.text((x + 50, y + 158), ["Today", "Jun 29", "Saved"][i], font=_font(14),
+                   fill=(84, 96, 112))
+        d.rounded_rectangle([638, 360, 966, 458], radius=22, fill=(8, 13, 22, 218),
+                            outline=white, width=2)
+        d.text((668, 392), "Find photos by place", font=_font(25, bold=True), fill=white)
+        d.text((668, 426), "Date • GPS • Location", font=_font(18, bold=True), fill=(205, 218, 230))
     elif feature_id == "speedometer":
         cx, cy, r = 540, 510, 160
         d.arc([cx - r, cy - r, cx + r, cy + r], 205, 335, fill=white, width=16)

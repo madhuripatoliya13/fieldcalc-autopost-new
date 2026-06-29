@@ -93,3 +93,15 @@ def test_people_prompts_avoid_visible_faces():
 
     assert "face not visible" in prompt or "no visible face" in prompt
     assert "no distorted face" in prompt
+
+
+def test_gps_gallery_prompt_is_feature_specific_and_face_safe():
+    prompt = build_scenario_prompt(
+        {"id": "gps-gallery", "name": "GPS Photo Gallery"},
+        {"name": "Tutorial / How-To"},
+        {},
+    ).lower()
+
+    assert "geotagged" in prompt
+    assert "photo gallery" in prompt
+    assert "no face visible" in prompt or "no visible face" in prompt
